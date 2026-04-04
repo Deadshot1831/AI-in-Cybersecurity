@@ -15,6 +15,194 @@ const updateStatus = (status: AnalysisStatus, progress: number) => {
 }
 
 // ----------------------------------------------------------------
+// Freeform text parser — infers components from natural language
+// ----------------------------------------------------------------
+
+interface KeywordRule {
+  type: SystemArchitecture["components"][0]["type"]
+  name: string
+  keywords: RegExp[]
+  description: string
+  isExternalFacing: boolean
+}
+
+const KEYWORD_RULES: KeywordRule[] = [
+  {
+    type: "llm-endpoint",
+    name: "LLM Endpoint",
+    keywords: [/\bllm\b/i, /\bgpt[-\s]?\d?\b/i, /\bclaude\b/i, /\blanguage model\b/i, /\bchatbot\b/i, /\bchat\s?bot\b/i, /\bopenai\b/i, /\banthrop/i, /\bgemini\b/i, /\bcopilot\b/i, /\bcompletion\b/i, /\bfoundation model\b/i, /\bai\s+(model|service|system|agent|assistant)\b/i, /\btext generation\b/i, /\bllama\b/i, /\bmistral\b/i],
+    description: "Large Language Model service for text generation",
+    isExternalFacing: false,
+  },
+  {
+    type: "rag-database",
+    name: "RAG Knowledge Base",
+    keywords: [/\brag\b/i, /\bretrieval[\s-]augmented\b/i, /\bknowledge base\b/i, /\bdocument\s+(store|retrieval|corpus)\b/i, /\bgrounding\b/i],
+    description: "Retrieval-Augmented Generation document store",
+    isExternalFacing: false,
+  },
+  {
+    type: "vector-store",
+    name: "Vector Database",
+    keywords: [/\bvector\s*(db|database|store)\b/i, /\bembedding\s*(store|db|database|index)\b/i, /\bpinecone\b/i, /\bchroma\b/i, /\bweaviate\b/i, /\bqdrant\b/i, /\bfaiss\b/i, /\bmilvus\b/i, /\bsemantic\s+search\b/i],
+    description: "Vector database for similarity search",
+    isExternalFacing: false,
+  },
+  {
+    type: "prompt-template",
+    name: "Prompt Template Engine",
+    keywords: [/\bprompt\s+(template|engineering|management)\b/i, /\bsystem\s+prompt\b/i, /\bprompt\s+chain\b/i, /\blangchain\b/i, /\bllamaindex\b/i],
+    description: "Prompt template management and chaining",
+    isExternalFacing: false,
+  },
+  {
+    type: "user-interface",
+    name: "Web Interface",
+    keywords: [/\b(web\s*)?(ui|interface|frontend|front[\s-]?end)\b/i, /\bdashboard\b/i, /\bportal\b/i, /\bchat\s+interface\b/i, /\bweb\s*(app|application|site)\b/i, /\bmobile\s+app\b/i, /\breact\b/i, /\bnext\.?js\b/i],
+    description: "User-facing web application",
+    isExternalFacing: true,
+  },
+  {
+    type: "api-gateway",
+    name: "API Gateway",
+    keywords: [/\bapi\s+gateway\b/i, /\bload\s+balancer\b/i, /\breverse\s+proxy\b/i, /\bnginx\b/i, /\bkong\b/i, /\brest\s*api\b/i, /\bgraphql\b/i, /\bendpoint\b/i],
+    description: "API gateway for request routing and rate limiting",
+    isExternalFacing: true,
+  },
+  {
+    type: "data-pipeline",
+    name: "Data Pipeline",
+    keywords: [/\bdata\s+pipeline\b/i, /\betl\b/i, /\bingestion\b/i, /\bpreprocessing\b/i, /\bbatch\s+(processing|job)\b/i, /\bdata\s+flow\b/i, /\bairflow\b/i, /\bspark\b/i, /\bkafka\b/i],
+    description: "Data ingestion and processing pipeline",
+    isExternalFacing: false,
+  },
+  {
+    type: "auth-service",
+    name: "Authentication Service",
+    keywords: [/\bauth(entication|orization)?\b/i, /\boauth\b/i, /\blogin\b/i, /\bsso\b/i, /\bidentity\b/i, /\bjwt\b/i, /\brbac\b/i, /\baccess\s+control\b/i],
+    description: "Authentication and authorization service",
+    isExternalFacing: false,
+  },
+  {
+    type: "external-api",
+    name: "External API",
+    keywords: [/\bexternal\s+(api|service)\b/i, /\bthird[\s-]?party\b/i, /\bwebhook\b/i, /\bplugin\b/i, /\btool[\s-]?use\b/i, /\btool[\s-]?calling\b/i, /\bfunction[\s-]?calling\b/i, /\bagent\b/i, /\bintegration\b/i],
+    description: "External third-party API integration",
+    isExternalFacing: true,
+  },
+  {
+    type: "storage",
+    name: "Data Store",
+    keywords: [/\bdatabase\b/i, /\b(sql|nosql|postgres|mysql|mongo|dynamo|redis|memcache)\b/i, /\bs3\b/i, /\bbucket\b/i, /\bcache\b/i, /\bfile\s*(system|store|storage)\b/i, /\bcloud\s+storage\b/i, /\bdata\s*store\b/i, /\bblob\b/i],
+    description: "Data storage and caching layer",
+    isExternalFacing: false,
+  },
+]
+
+function parseFreeformToArchitecture(text: string): SystemArchitecture {
+  const detectedComponents: SystemArchitecture["components"] = []
+  const usedTypes = new Set<string>()
+
+  // Scan text for keyword matches
+  for (const rule of KEYWORD_RULES) {
+    const matched = rule.keywords.some((re) => re.test(text))
+    if (matched && !usedTypes.has(rule.type)) {
+      usedTypes.add(rule.type)
+      detectedComponents.push({
+        id: crypto.randomUUID(),
+        name: rule.name,
+        type: rule.type,
+        description: rule.description,
+        technologies: [],
+        isExternalFacing: rule.isExternalFacing,
+      })
+    }
+  }
+
+  // Always include at least an LLM endpoint (it's an AI threat modeler after all)
+  if (!usedTypes.has("llm-endpoint")) {
+    detectedComponents.push({
+      id: crypto.randomUUID(),
+      name: "AI/LLM Service",
+      type: "llm-endpoint",
+      description: "Inferred AI/LLM service",
+      technologies: [],
+      isExternalFacing: false,
+    })
+  }
+
+  // If we only detected 1 component, add a user interface (something must interact with it)
+  if (detectedComponents.length === 1) {
+    detectedComponents.push({
+      id: crypto.randomUUID(),
+      name: "Application Interface",
+      type: "user-interface",
+      description: "Application interface interacting with the AI service",
+      technologies: [],
+      isExternalFacing: true,
+    })
+  }
+
+  // Infer data flows between detected components
+  const dataFlows: SystemArchitecture["dataFlows"] = []
+  const byType = (t: string) => detectedComponents.find((c) => c.type === t)
+
+  const ui = byType("user-interface")
+  const gateway = byType("api-gateway")
+  const llm = byType("llm-endpoint")
+  const rag = byType("rag-database")
+  const vector = byType("vector-store")
+  const pipeline = byType("data-pipeline")
+  const storage = byType("storage")
+  const ext = byType("external-api")
+  const auth = byType("auth-service")
+
+  const addFlow = (source: SystemArchitecture["components"][0] | undefined, target: SystemArchitecture["components"][0] | undefined, label: string) => {
+    if (source && target) {
+      dataFlows.push({
+        id: crypto.randomUUID(),
+        sourceId: source.id,
+        targetId: target.id,
+        label,
+        dataType: "application/json",
+        isEncrypted: true,
+      })
+    }
+  }
+
+  // Build logical flow chain
+  if (ui && gateway) {
+    addFlow(ui, gateway, "User requests")
+  } else if (ui && llm) {
+    addFlow(ui, llm, "User queries")
+  }
+  if (gateway && llm) addFlow(gateway, llm, "Forwarded requests")
+  if (gateway && auth) addFlow(gateway, auth, "Auth verification")
+  if (llm && rag) addFlow(llm, rag, "Context retrieval")
+  if (rag && vector) addFlow(rag, vector, "Vector search")
+  if (llm && ext) addFlow(llm, ext, "Tool calls")
+  if (pipeline && vector) addFlow(pipeline, vector, "Embedding ingestion")
+  if (pipeline && storage) addFlow(pipeline, storage, "Data read")
+  if (llm && storage) addFlow(llm, storage, "Data access")
+
+  // Extract a system name from the first sentence or use generic
+  const firstSentence = text.split(/[.\n!?]/)[0].trim()
+  const systemName = firstSentence.length > 5 && firstSentence.length < 80
+    ? firstSentence
+    : "User-Described AI System"
+
+  return {
+    id: crypto.randomUUID(),
+    name: systemName,
+    description: text.trim(),
+    components: detectedComponents,
+    dataFlows,
+    trustBoundaries: [],
+    createdAt: new Date().toISOString(),
+  }
+}
+
+// ----------------------------------------------------------------
 // Dynamic mock threat generation based on actual user-provided system
 // ----------------------------------------------------------------
 
@@ -583,38 +771,8 @@ export async function runThreatAnalysis(): Promise<void> {
     let system: SystemArchitecture
 
     if (systemStore.inputMode === "freeform") {
-      // In freeform mode, create a basic architecture from the text description
-      // (Live mode would use Claude to parse; mock mode creates a simple placeholder)
-      if (settings.isLiveMode && settings.apiKey) {
-        // TODO: Use Claude to parse freeform text into structured architecture
-        // For now, create a minimal architecture with an LLM component
-        system = {
-          id: crypto.randomUUID(),
-          name: "User-Described System",
-          description: systemStore.freeformText.trim(),
-          components: [
-            { id: crypto.randomUUID(), name: "LLM System", type: "llm-endpoint", description: "LLM endpoint described by user", technologies: [], isExternalFacing: true },
-          ],
-          dataFlows: [],
-          trustBoundaries: [],
-          createdAt: new Date().toISOString(),
-        }
-      } else {
-        // In freeform mock mode, create a basic architecture reflecting the description
-        system = {
-          id: crypto.randomUUID(),
-          name: "User-Described System",
-          description: systemStore.freeformText.trim(),
-          components: [
-            { id: crypto.randomUUID(), name: "User Interface", type: "user-interface", description: "Frontend for user interactions", technologies: [], isExternalFacing: true },
-            { id: crypto.randomUUID(), name: "LLM Endpoint", type: "llm-endpoint", description: "LLM service described by user", technologies: [], isExternalFacing: false },
-            { id: crypto.randomUUID(), name: "API Gateway", type: "api-gateway", description: "Request routing and auth", technologies: [], isExternalFacing: true },
-          ],
-          dataFlows: [],
-          trustBoundaries: [],
-          createdAt: new Date().toISOString(),
-        }
-      }
+      // Parse freeform text to infer architecture from keywords
+      system = parseFreeformToArchitecture(systemStore.freeformText)
       systemStore.setArchitecture(system)
     } else {
       system = systemStore.architecture!
