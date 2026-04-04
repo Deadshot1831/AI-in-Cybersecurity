@@ -1,0 +1,135 @@
+import type { SystemArchitecture } from "@/types/system"
+import type { ThreatAnalysisResult } from "@/types/threat"
+import type { BlogExportData } from "@/types/export"
+
+export function generateBlogPost(
+  system: SystemArchitecture,
+  analysis: ThreatAnalysisResult
+): BlogExportData {
+  const lines: string[] = []
+
+  lines.push(`# Threat Model Analysis: ${system.name}`)
+  lines.push("")
+  lines.push(`*Generated on ${new Date(analysis.analyzedAt).toLocaleDateString()} by AI Threat Modeler*`)
+  lines.push("")
+
+  // Executive Summary
+  lines.push("## Executive Summary")
+  lines.push("")
+  lines.push(analysis.executiveSummary)
+  lines.push("")
+
+  // System Architecture
+  lines.push("## System Architecture")
+  lines.push("")
+  lines.push(system.description)
+  lines.push("")
+  lines.push("### Components")
+  lines.push("")
+  for (const comp of system.components) {
+    lines.push(`- **${comp.name}** (${comp.type}): ${comp.description}${comp.isExternalFacing ? " *(external-facing)*" : ""}`)
+  }
+  lines.push("")
+
+  if (system.dataFlows.length > 0) {
+    lines.push("### Data Flows")
+    lines.push("")
+    for (const flow of system.dataFlows) {
+      const src = system.components.find((c) => c.id === flow.sourceId)?.name ?? flow.sourceId
+      const tgt = system.components.find((c) => c.id === flow.targetId)?.name ?? flow.targetId
+      lines.push(`- ${src} → ${tgt}: ${flow.label} (${flow.isEncrypted ? "encrypted" : "**unencrypted**"})`)
+    }
+    lines.push("")
+  }
+
+  // Threat Analysis
+  lines.push("## Threat Analysis")
+  lines.push("")
+  lines.push(`A total of **${analysis.threats.length} threats** were identified across the OWASP LLM Top 10, STRIDE, and MITRE ATLAS frameworks.`)
+  lines.push("")
+
+  // OWASP findings
+  const owaspThreats = analysis.threats.filter((t) => t.owaspMappings.length > 0)
+  if (owaspThreats.length > 0) {
+    lines.push("### OWASP LLM Top 10 Findings")
+    lines.push("")
+    for (const threat of owaspThreats) {
+      const mappings = threat.owaspMappings.map((m) => `${m.id}: ${m.name}`).join(", ")
+      lines.push(`#### ${threat.title} [${threat.severity.toUpperCase()}]`)
+      lines.push("")
+      lines.push(`**OWASP Category:** ${mappings}`)
+      lines.push("")
+      lines.push(threat.description)
+      lines.push("")
+      lines.push(`**Attack Vector:** ${threat.attackVector}`)
+      lines.push("")
+      lines.push(`**Impact:** ${threat.impact}`)
+      lines.push("")
+    }
+  }
+
+  // STRIDE findings
+  const strideThreats = analysis.threats.filter((t) => t.strideMappings.length > 0)
+  if (strideThreats.length > 0) {
+    lines.push("### STRIDE Analysis")
+    lines.push("")
+    const categories = new Set(strideThreats.flatMap((t) => t.strideMappings.map((m) => m.category)))
+    for (const cat of categories) {
+      const catThreats = strideThreats.filter((t) => t.strideMappings.some((m) => m.category === cat))
+      lines.push(`**${cat.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}:**`)
+      for (const t of catThreats) {
+        lines.push(`- ${t.title} (${t.severity})`)
+      }
+      lines.push("")
+    }
+  }
+
+  // Risk Summary
+  lines.push("## Risk Summary")
+  lines.push("")
+  lines.push(`| Metric | Value |`)
+  lines.push(`|--------|-------|`)
+  lines.push(`| Overall Risk Score | ${analysis.riskScore.overall}/100 |`)
+  lines.push(`| Critical Threats | ${analysis.riskScore.bySeverity.critical} |`)
+  lines.push(`| High Threats | ${analysis.riskScore.bySeverity.high} |`)
+  lines.push(`| Medium Threats | ${analysis.riskScore.bySeverity.medium} |`)
+  lines.push(`| Low Threats | ${analysis.riskScore.bySeverity.low} |`)
+  lines.push("")
+
+  // Mitigations
+  lines.push("## Recommended Mitigations")
+  lines.push("")
+  const allMitigations = analysis.threats.flatMap((t) => t.mitigations)
+  const critMit = allMitigations.filter((m) => m.priority === "critical")
+  const highMit = allMitigations.filter((m) => m.priority === "high")
+
+  if (critMit.length > 0) {
+    lines.push("### Critical Priority")
+    for (const m of critMit) {
+      lines.push(`1. **${m.title}**: ${m.description}`)
+    }
+    lines.push("")
+  }
+  if (highMit.length > 0) {
+    lines.push("### High Priority")
+    for (const m of highMit) {
+      lines.push(`1. **${m.title}**: ${m.description}`)
+    }
+    lines.push("")
+  }
+
+  // Conclusion
+  lines.push("## Conclusion")
+  lines.push("")
+  lines.push(`This threat model identified ${analysis.threats.length} potential threats across the ${system.name} system. `)
+  lines.push(`The overall risk score of ${analysis.riskScore.overall}/100 indicates a ${analysis.riskScore.overall >= 75 ? "critical" : analysis.riskScore.overall >= 50 ? "high" : "moderate"} risk level. `)
+  lines.push("Immediate action should focus on critical and high-priority mitigations, particularly those addressing prompt injection and information disclosure risks.")
+  lines.push("")
+  lines.push("---")
+  lines.push("*Generated by [AI Threat Modeler](https://github.com) — Powered by OWASP LLM Top 10, STRIDE, and MITRE ATLAS*")
+
+  const markdown = lines.join("\n")
+  const wordCount = markdown.split(/\s+/).length
+
+  return { title: `Threat Model Analysis: ${system.name}`, markdown, wordCount }
+}
