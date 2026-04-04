@@ -11,7 +11,7 @@ import { useAnalysisStore } from "@/stores/useAnalysisStore"
 export function InputPage() {
   const navigate = useNavigate()
   const { architecture, freeformText, inputMode, reset: resetSystem } = useSystemStore()
-  const { reset: resetAnalysis } = useAnalysisStore()
+  const { reset: resetAnalysis, requestAnalysis } = useAnalysisStore()
 
   const canAnalyze =
     inputMode === "freeform"
@@ -20,6 +20,7 @@ export function InputPage() {
 
   const handleAnalyze = () => {
     resetAnalysis()
+    requestAnalysis()
     navigate("/analysis")
   }
 

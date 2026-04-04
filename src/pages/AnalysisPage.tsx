@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, FileDown } from "lucide-react"
+import { ArrowLeft, FileDown, ShieldAlert } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -15,10 +15,16 @@ import { runThreatAnalysis } from "@/services/analysis/threatEngine"
 
 export function AnalysisPage() {
   const navigate = useNavigate()
-  const { status, result, getFilteredThreats } = useAnalysisStore()
-  const architecture = useSystemStore((s) => s.architecture)
+  const { status, result, getFilteredThreats, analysisRequested } = useAnalysisStore()
+  const { architecture, freeformText, inputMode } = useSystemStore()
 
   const filteredThreats = getFilteredThreats()
+
+  // Check if user has provided valid input
+  const hasInput =
+    inputMode === "freeform"
+      ? freeformText.trim().length > 20
+      : architecture !== null && architecture.components.length > 0
 
   const componentNames = useMemo(() => {
     const names: Record<string, string> = {}
@@ -27,27 +33,36 @@ export function AnalysisPage() {
         names[c.id] = c.name
       })
     }
-    // Also add mock component names
-    if (result) {
-      const mockNames: Record<string, string> = {
-        "comp-ui": "Chat Frontend",
-        "comp-gateway": "API Gateway",
-        "comp-llm": "Claude LLM Endpoint",
-        "comp-rag": "RAG Pipeline",
-        "comp-vector": "Pinecone Vector Store",
-        "comp-ingest": "Document Ingestion Service",
-        "comp-auth": "Auth Service",
-      }
-      Object.assign(names, mockNames)
-    }
     return names
-  }, [architecture, result])
+  }, [architecture])
 
+  // Only run analysis if explicitly requested via the Input page AND there's valid input
   useEffect(() => {
-    if (status === "idle") {
+    if (analysisRequested && hasInput && status === "idle") {
       runThreatAnalysis()
     }
-  }, [])
+  }, [analysisRequested, hasInput, status])
+
+  // No input provided — show a prompt to go back
+  if (!hasInput && !result) {
+    return (
+      <PageContainer>
+        <div className="flex flex-col items-center justify-center py-20 gap-6">
+          <ShieldAlert className="h-16 w-16 text-muted-foreground" />
+          <div className="text-center max-w-md">
+            <h2 className="text-xl font-semibold mb-2">No System Input Provided</h2>
+            <p className="text-sm text-muted-foreground">
+              You need to describe your LLM/GenAI system architecture before running a
+              threat analysis. Go to the Input page to define your system.
+            </p>
+          </div>
+          <Button onClick={() => navigate("/input")} size="lg">
+            Go to Input Page
+          </Button>
+        </div>
+      </PageContainer>
+    )
+  }
 
   return (
     <PageContainer>

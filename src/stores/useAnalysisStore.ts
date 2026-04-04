@@ -13,6 +13,7 @@ interface AnalysisStore {
   progress: number
   streamingText: string
   error: string | null
+  analysisRequested: boolean
 
   activeFrameworks: FrameworkType[]
   activeSeverities: Severity[]
@@ -29,6 +30,7 @@ interface AnalysisStore {
   setActiveFrameworks: (f: FrameworkType[]) => void
   setActiveSeverities: (s: Severity[]) => void
   setActiveComponentIds: (ids: string[]) => void
+  requestAnalysis: () => void
   reset: () => void
 }
 
@@ -45,6 +47,7 @@ export const useAnalysisStore = create<AnalysisStore>()((set, get) => ({
   progress: 0,
   streamingText: "",
   error: null,
+  analysisRequested: false,
 
   activeFrameworks: ["owasp-llm", "stride", "mitre-atlas"],
   activeSeverities: ["critical", "high", "medium", "low"],
@@ -92,6 +95,7 @@ export const useAnalysisStore = create<AnalysisStore>()((set, get) => ({
   setActiveFrameworks: (f) => set({ activeFrameworks: f }),
   setActiveSeverities: (s) => set({ activeSeverities: s }),
   setActiveComponentIds: (ids) => set({ activeComponentIds: ids }),
+  requestAnalysis: () => set({ analysisRequested: true }),
 
   reset: () =>
     set({
@@ -100,6 +104,7 @@ export const useAnalysisStore = create<AnalysisStore>()((set, get) => ({
       progress: 0,
       streamingText: "",
       error: null,
+      analysisRequested: false,
       activeFrameworks: ["owasp-llm", "stride", "mitre-atlas"],
       activeSeverities: ["critical", "high", "medium", "low"],
       activeComponentIds: [],
