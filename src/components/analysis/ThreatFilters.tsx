@@ -3,7 +3,9 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useAnalysisStore } from "@/stores/useAnalysisStore"
 import { useSystemStore } from "@/stores/useSystemStore"
+import { useSettingsStore } from "@/stores/useSettingsStore"
 import { FRAMEWORK_LABELS } from "@/lib/constants"
+import { FRAMEWORK_PLAIN, SEVERITY_PLAIN } from "@/lib/plainEnglish"
 import type { FrameworkType, Severity } from "@/types/threat"
 
 const FRAMEWORKS: FrameworkType[] = ["owasp-llm", "stride", "mitre-atlas"]
@@ -26,6 +28,7 @@ export function ThreatFilters() {
     setActiveComponentIds,
   } = useAnalysisStore()
   const architecture = useSystemStore((s) => s.architecture)
+  const plainEnglish = useSettingsStore((s) => s.plainEnglish)
 
   const toggleFramework = (fw: FrameworkType) => {
     if (activeFrameworks.includes(fw)) {
@@ -58,7 +61,9 @@ export function ThreatFilters() {
   return (
     <div className="space-y-4">
       <div>
-        <Label className="text-xs font-semibold uppercase text-muted-foreground">Frameworks</Label>
+        <Label className="text-xs font-semibold uppercase text-muted-foreground">
+          {plainEnglish ? "Security Standards" : "Frameworks"}
+        </Label>
         <div className="flex flex-wrap gap-1.5 mt-2">
           {FRAMEWORKS.map((fw) => (
             <Badge
@@ -67,7 +72,7 @@ export function ThreatFilters() {
               className="cursor-pointer text-xs"
               onClick={() => toggleFramework(fw)}
             >
-              {FRAMEWORK_LABELS[fw]}
+              {plainEnglish ? FRAMEWORK_PLAIN[fw] : FRAMEWORK_LABELS[fw]}
             </Badge>
           ))}
         </div>
@@ -76,7 +81,9 @@ export function ThreatFilters() {
       <Separator />
 
       <div>
-        <Label className="text-xs font-semibold uppercase text-muted-foreground">Severity</Label>
+        <Label className="text-xs font-semibold uppercase text-muted-foreground">
+          {plainEnglish ? "Urgency" : "Severity"}
+        </Label>
         <div className="flex flex-wrap gap-1.5 mt-2">
           {SEVERITIES.map((sev) => (
             <Badge
@@ -86,7 +93,7 @@ export function ThreatFilters() {
               onClick={() => toggleSeverity(sev)}
             >
               <div className={`h-2 w-2 rounded-full ${severityColors[sev]} mr-1.5`} />
-              {sev}
+              {plainEnglish ? SEVERITY_PLAIN[sev] : sev}
             </Badge>
           ))}
         </div>
@@ -96,7 +103,9 @@ export function ThreatFilters() {
         <>
           <Separator />
           <div>
-            <Label className="text-xs font-semibold uppercase text-muted-foreground">Components</Label>
+            <Label className="text-xs font-semibold uppercase text-muted-foreground">
+              {plainEnglish ? "System Parts" : "Components"}
+            </Label>
             <div className="flex flex-wrap gap-1.5 mt-2">
               {architecture.components.map((c) => (
                 <Badge

@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { ApiKeyInput } from "@/components/shared/ApiKeyInput"
 import { LiveModeToggle } from "@/components/shared/LiveModeToggle"
+import { PlainEnglishToggle } from "@/components/shared/PlainEnglishToggle"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -45,6 +46,8 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <div className="hidden sm:flex items-center gap-2">
+            <PlainEnglishToggle />
+            <Separator orientation="vertical" className="h-6" />
             <LiveModeToggle />
             <Separator orientation="vertical" className="h-6" />
             <ApiKeyInput />
@@ -70,6 +73,9 @@ export function Header() {
                   </Link>
                 ))}
                 <Separator className="my-2" />
+                <div className="flex items-center gap-2 px-4 py-2">
+                  <PlainEnglishToggle />
+                </div>
                 <div className="flex items-center gap-2 px-4 py-2">
                   <LiveModeToggle />
                 </div>
