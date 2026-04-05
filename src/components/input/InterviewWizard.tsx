@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { ChevronRight, ChevronLeft, Sparkles, CheckCircle2 } from "lucide-react"
+import { useState, useCallback } from "react"
+import { ChevronRight, ChevronLeft, Sparkles, CheckCircle2, Globe, Bot, BookOpen, Lock, Zap, Key, RefreshCw, Server } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -19,6 +19,10 @@ interface WizardStep {
   question: string
   helpText: string
   emoji: string
+  icon: typeof Globe
+  gradient: string
+  accentColor: string
+  illustration: string
   componentsIfYes: { type: ComponentType; name: string; description: string; isExternalFacing: boolean }[]
   flowsIfYes?: { sourceType: ComponentType; targetType: ComponentType; label: string }[]
 }
@@ -27,15 +31,23 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: "system-name",
     question: "What would you like to call your AI system?",
-    helpText: "Give it a name so we can personalize the report (e.g., \"Customer Support Bot\", \"Legal Document Analyzer\")",
-    emoji: "🏷️",
+    helpText: "Give it a name so we can personalize the report",
+    emoji: "\uD83C\uDFF7\uFE0F",
+    icon: Server,
+    gradient: "from-violet-500/20 to-purple-500/20",
+    accentColor: "violet",
+    illustration: "Name your system to get started",
     componentsIfYes: [],
   },
   {
     id: "public-facing",
     question: "Can anyone on the internet talk to your AI?",
-    helpText: "If customers, users, or the public can interact with your AI through a website, app, or API - answer Yes.",
-    emoji: "🌐",
+    helpText: "If customers, users, or the public can interact with your AI through a website, app, or API",
+    emoji: "\uD83C\uDF10",
+    icon: Globe,
+    gradient: "from-blue-500/20 to-cyan-500/20",
+    accentColor: "blue",
+    illustration: "Public-facing systems have a larger attack surface",
     componentsIfYes: [
       { type: "user-interface", name: "Public Web Interface", description: "Internet-facing interface where users interact with the AI", isExternalFacing: true },
       { type: "api-gateway", name: "API Gateway", description: "Entry point that routes and validates incoming requests", isExternalFacing: true },
@@ -46,9 +58,13 @@ const WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: "has-llm",
-    question: "Does your system use an AI language model (like ChatGPT, Claude, Gemini)?",
-    helpText: "This includes any large language model that generates text, answers questions, or processes natural language.",
-    emoji: "🤖",
+    question: "Does your system use an AI language model?",
+    helpText: "This includes any large language model like ChatGPT, Claude, or Gemini that generates text",
+    emoji: "\uD83E\uDD16",
+    icon: Bot,
+    gradient: "from-emerald-500/20 to-green-500/20",
+    accentColor: "emerald",
+    illustration: "LLMs introduce unique risks like prompt injection",
     componentsIfYes: [
       { type: "llm-endpoint", name: "AI Language Model", description: "Large Language Model that generates responses", isExternalFacing: false },
     ],
@@ -58,9 +74,13 @@ const WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: "reads-docs",
-    question: "Does your AI read or search through documents to answer questions?",
-    helpText: "This is called RAG (Retrieval-Augmented Generation). If your AI looks up company docs, knowledge bases, or PDFs before answering, select Yes.",
-    emoji: "📚",
+    question: "Does your AI search documents to answer questions?",
+    helpText: "Called RAG - if your AI looks up company docs, knowledge bases, or PDFs before answering",
+    emoji: "\uD83D\uDCDA",
+    icon: BookOpen,
+    gradient: "from-amber-500/20 to-yellow-500/20",
+    accentColor: "amber",
+    illustration: "Document retrieval adds data exfiltration risks",
     componentsIfYes: [
       { type: "rag-database", name: "Document Knowledge Base", description: "Collection of documents the AI searches for context", isExternalFacing: false },
       { type: "vector-store", name: "Search Index", description: "Index that helps the AI find relevant documents quickly", isExternalFacing: false },
@@ -72,9 +92,13 @@ const WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: "private-data",
-    question: "Does your AI have access to private customer data?",
-    helpText: "Things like names, emails, billing info, health records, or any personally identifiable information (PII).",
-    emoji: "🔒",
+    question: "Does your AI access private customer data?",
+    helpText: "Names, emails, billing info, health records, or any personally identifiable information (PII)",
+    emoji: "\uD83D\uDD12",
+    icon: Lock,
+    gradient: "from-red-500/20 to-rose-500/20",
+    accentColor: "red",
+    illustration: "PII access requires strict data protection controls",
     componentsIfYes: [
       { type: "storage", name: "Customer Data Store", description: "Database containing private customer information", isExternalFacing: false },
     ],
@@ -84,9 +108,13 @@ const WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: "takes-action",
-    question: "Can your AI take real-world actions? (send emails, make purchases, update records)",
-    helpText: "If your AI can do more than just answer questions - like booking appointments, sending notifications, or modifying databases - answer Yes.",
-    emoji: "⚡",
+    question: "Can your AI take real-world actions?",
+    helpText: "Like sending emails, making purchases, updating records, booking appointments, or triggering notifications",
+    emoji: "\u26A1",
+    icon: Zap,
+    gradient: "from-orange-500/20 to-amber-500/20",
+    accentColor: "orange",
+    illustration: "Action-capable AI needs authorization guardrails",
     componentsIfYes: [
       { type: "external-api", name: "External Actions API", description: "External services the AI can trigger (email, payments, etc.)", isExternalFacing: true },
     ],
@@ -97,8 +125,12 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: "has-auth",
     question: "Do users need to log in before using your AI?",
-    helpText: "If there's any form of login, password, or access control protecting your AI system.",
-    emoji: "🔑",
+    helpText: "Any form of login, password, or access control protecting your AI system",
+    emoji: "\uD83D\uDD11",
+    icon: Key,
+    gradient: "from-indigo-500/20 to-blue-500/20",
+    accentColor: "indigo",
+    illustration: "Authentication controls who can access your system",
     componentsIfYes: [
       { type: "auth-service", name: "Login & Access Control", description: "Authentication service managing user identities and permissions", isExternalFacing: false },
     ],
@@ -109,8 +141,12 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: "data-pipeline",
     question: "Is there a process that regularly feeds new data into your AI?",
-    helpText: "Scheduled imports, data syncs, document uploads, or any automated data ingestion pipeline.",
-    emoji: "🔄",
+    helpText: "Scheduled imports, data syncs, document uploads, or any automated data ingestion pipeline",
+    emoji: "\uD83D\uDD04",
+    icon: RefreshCw,
+    gradient: "from-teal-500/20 to-cyan-500/20",
+    accentColor: "teal",
+    illustration: "Data pipelines can be a vector for data poisoning",
     componentsIfYes: [
       { type: "data-pipeline", name: "Data Ingestion Pipeline", description: "Automated process that feeds new data into the AI system", isExternalFacing: false },
     ],
@@ -125,16 +161,23 @@ export function InterviewWizard() {
   const [systemName, setSystemName] = useState("")
   const [answers, setAnswers] = useState<Record<string, WizardAnswer>>({})
   const [isComplete, setIsComplete] = useState(false)
+  const [animKey, setAnimKey] = useState(0)
   const { setArchitecture, setInputMode } = useSystemStore()
 
   const step = WIZARD_STEPS[currentStep]
   const totalQuestions = WIZARD_STEPS.length
   const progress = ((currentStep) / totalQuestions) * 100
   const isNameStep = currentStep === 0
+  const StepIcon = step.icon
+
+  const animateTransition = useCallback(() => {
+    setAnimKey((k) => k + 1)
+  }, [])
 
   const handleAnswer = (value: boolean) => {
     setAnswers((prev) => ({ ...prev, [step.id]: { answered: true, value } }))
     if (currentStep < totalQuestions - 1) {
+      animateTransition()
       setCurrentStep((s) => s + 1)
     } else {
       buildArchitecture(value)
@@ -144,11 +187,15 @@ export function InterviewWizard() {
   const handleNameNext = () => {
     if (systemName.trim().length < 2) return
     setAnswers((prev) => ({ ...prev, "system-name": { answered: true, value: true } }))
+    animateTransition()
     setCurrentStep(1)
   }
 
   const handleBack = () => {
-    if (currentStep > 0) setCurrentStep((s) => s - 1)
+    if (currentStep > 0) {
+      animateTransition()
+      setCurrentStep((s) => s - 1)
+    }
   }
 
   const buildArchitecture = (lastAnswer: boolean) => {
@@ -196,7 +243,6 @@ export function InterviewWizard() {
       }
     }
 
-    // Always ensure at least an LLM component
     if (!typeToId["llm-endpoint"]) {
       const id = crypto.randomUUID()
       typeToId["llm-endpoint"] = id
@@ -227,105 +273,189 @@ export function InterviewWizard() {
   }
 
   const answeredYesCount = Object.values(answers).filter((a) => a.value).length
+  const detectedFeatures = WIZARD_STEPS.slice(1).filter((ws) => answers[ws.id]?.value)
 
   if (isComplete) {
     return (
-      <Card className="border-green-500/30 bg-green-500/5">
-        <CardContent className="flex flex-col items-center gap-4 py-8">
-          <CheckCircle2 className="h-12 w-12 text-green-500" />
-          <div className="text-center">
-            <h3 className="text-lg font-semibold">System Profile Complete!</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              We identified <strong>{answeredYesCount} key features</strong> in your system.
-              Your architecture has been built automatically.
+      <div className="animate-wizard-card-pop">
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-emerald-500/5 overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent pointer-events-none" />
+          <CardContent className="flex flex-col items-center gap-5 py-10 relative">
+            <div className="animate-wizard-check-bounce">
+              <div className="rounded-full bg-green-500/20 p-4">
+                <CheckCircle2 className="h-12 w-12 text-green-500" />
+              </div>
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold">System Profile Complete!</h3>
+              <p className="text-sm text-muted-foreground max-w-md">
+                We identified <strong className="text-green-500">{answeredYesCount} key features</strong> in your system.
+                Your architecture has been built automatically.
+              </p>
+            </div>
+            {detectedFeatures.length > 0 && (
+              <div className="flex flex-wrap gap-2 justify-center max-w-lg">
+                {detectedFeatures.map((ws, i) => {
+                  const WsIcon = ws.icon
+                  return (
+                    <Badge
+                      key={ws.id}
+                      variant="secondary"
+                      className="gap-1.5 py-1.5 px-3 text-xs animate-wizard-card-pop"
+                      style={{ animationDelay: `${i * 100}ms` }}
+                    >
+                      <WsIcon className="h-3 w-3" />
+                      {ws.componentsIfYes[0]?.name ?? ws.id}
+                    </Badge>
+                  )
+                })}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground text-center max-w-sm">
+              Switch to <strong>"Structured Input"</strong> to review components, or click <strong>"Analyze Threats"</strong> to start.
             </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Switch to the <strong>"Structured Input"</strong> tab to review the components, or click <strong>"Analyze Threats"</strong> below to start.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     )
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>Question {currentStep + 1} of {totalQuestions}</span>
-        <span>{Math.round(progress)}% complete</span>
+    <div className="space-y-5">
+      {/* Progress Header */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Question {currentStep + 1} of {totalQuestions}</span>
+          </div>
+          <span className="font-medium text-muted-foreground">{Math.round(progress)}%</span>
+        </div>
+        <div className="relative">
+          <Progress value={progress} className="h-2.5" />
+          {/* Step indicator dots */}
+          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-0.5 pointer-events-none">
+            {WIZARD_STEPS.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${
+                  i < currentStep
+                    ? "bg-primary scale-100"
+                    : i === currentStep
+                    ? "bg-primary scale-125"
+                    : "bg-muted-foreground/30 scale-75"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
-      <Progress value={progress} className="h-2" />
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-start gap-3">
-            <span className="text-3xl">{step.emoji}</span>
-            <div>
-              <CardTitle className="text-lg">{step.question}</CardTitle>
-              <CardDescription className="mt-1">{step.helpText}</CardDescription>
+      {/* Question Card */}
+      <div key={animKey} className="animate-wizard-slide-in">
+        <Card className={`overflow-hidden border-0 shadow-lg bg-gradient-to-br ${step.gradient}`}>
+          {/* Illustration Header */}
+          <div className="relative px-6 pt-6 pb-4">
+            <div className="flex items-center gap-4">
+              <div className={`rounded-2xl p-3 bg-gradient-to-br ${step.gradient} border border-white/10 shadow-inner`}>
+                <StepIcon className="h-8 w-8 text-foreground" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-bold leading-snug">{step.question}</h2>
+                <p className="text-sm text-muted-foreground mt-1">{step.helpText}</p>
+              </div>
+            </div>
+            {/* Subtle context hint */}
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground/70">
+              <div className="h-px flex-1 bg-foreground/5" />
+              <span className="italic">{step.illustration}</span>
+              <div className="h-px flex-1 bg-foreground/5" />
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          {isNameStep ? (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="system-name">System Name</Label>
-                <Input
-                  id="system-name"
-                  placeholder="e.g., Customer Support Bot"
-                  value={systemName}
-                  onChange={(e) => setSystemName(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleNameNext()}
-                />
-              </div>
-              <div className="flex justify-end">
-                <Button onClick={handleNameNext} disabled={systemName.trim().length < 2} className="gap-2">
-                  Next <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              {currentStep > 0 && (
-                <Button variant="ghost" size="sm" onClick={handleBack} className="gap-1">
-                  <ChevronLeft className="h-4 w-4" /> Back
-                </Button>
-              )}
-              <div className="flex gap-3 ml-auto">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => handleAnswer(false)}
-                  className="min-w-[100px]"
-                >
-                  No
-                </Button>
-                <Button
-                  size="lg"
-                  onClick={() => handleAnswer(true)}
-                  className="min-w-[100px] gap-2"
-                >
-                  <Sparkles className="h-4 w-4" /> Yes
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {Object.keys(answers).length > 1 && (
-        <div className="flex flex-wrap gap-2">
-          <span className="text-xs text-muted-foreground mr-1 self-center">Features detected:</span>
-          {WIZARD_STEPS.slice(1).map((ws) => {
-            const ans = answers[ws.id]
-            if (!ans?.value) return null
-            return (
-              <Badge key={ws.id} variant="secondary" className="text-xs">
-                {ws.emoji} {ws.componentsIfYes[0]?.name ?? ws.id}
-              </Badge>
-            )
-          })}
+          <CardContent className="pt-2 pb-6">
+            {isNameStep ? (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="system-name" className="text-sm font-medium">System Name</Label>
+                  <Input
+                    id="system-name"
+                    placeholder='e.g., "Customer Support Bot", "Legal Document Analyzer"'
+                    value={systemName}
+                    onChange={(e) => setSystemName(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleNameNext()}
+                    className="h-12 text-base bg-background/50 border-foreground/10"
+                    autoFocus
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    onClick={handleNameNext}
+                    disabled={systemName.trim().length < 2}
+                    size="lg"
+                    className="gap-2 px-6"
+                  >
+                    Get Started <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Large clickable Yes/No cards */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleAnswer(false)}
+                    className="group relative rounded-xl border-2 border-foreground/10 bg-background/40 hover:bg-background/60 hover:border-foreground/20 p-5 transition-all duration-200 text-left active:scale-[0.98]"
+                  >
+                    <div className="text-center space-y-2">
+                      <div className="text-3xl">&#x274C;</div>
+                      <span className="text-base font-semibold block">No</span>
+                      <span className="text-xs text-muted-foreground block">Skip this feature</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => handleAnswer(true)}
+                    className="group relative rounded-xl border-2 border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 p-5 transition-all duration-200 text-left active:scale-[0.98]"
+                  >
+                    <div className="text-center space-y-2">
+                      <div className="text-3xl">&#x2705;</div>
+                      <span className="text-base font-semibold block">Yes</span>
+                      <span className="text-xs text-muted-foreground block">My system has this</span>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Back button */}
+                {currentStep > 0 && (
+                  <div className="flex justify-start">
+                    <Button variant="ghost" size="sm" onClick={handleBack} className="gap-1 text-muted-foreground">
+                      <ChevronLeft className="h-4 w-4" /> Previous question
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Detected features strip */}
+      {detectedFeatures.length > 0 && (
+        <div className="glass rounded-xl p-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 mr-1">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="text-xs font-medium text-muted-foreground">Detected:</span>
+            </div>
+            {detectedFeatures.map((ws) => {
+              const WsIcon = ws.icon
+              return (
+                <Badge key={ws.id} variant="secondary" className="gap-1 text-xs py-1">
+                  <WsIcon className="h-3 w-3" />
+                  {ws.componentsIfYes[0]?.name ?? ws.id}
+                </Badge>
+              )
+            })}
+          </div>
         </div>
       )}
     </div>
