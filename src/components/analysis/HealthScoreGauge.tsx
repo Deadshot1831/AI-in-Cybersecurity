@@ -144,9 +144,9 @@ function AnimatedGaugeSVG({ score }: { score: number }) {
         {animatedScore}
       </text>
 
-      {/* Labels */}
-      <text x="18" y="140" textAnchor="start" className="fill-green-500" fontSize="9" fontWeight="600">SAFE</text>
-      <text x="182" y="140" textAnchor="end" className="fill-red-500" fontSize="9" fontWeight="600">RISK</text>
+      {/* Labels — aligned to arc endpoints */}
+      <text x="31" y="143" textAnchor="middle" className="fill-green-500" fontSize="9" fontWeight="600" letterSpacing="1">SAFE</text>
+      <text x="169" y="143" textAnchor="middle" className="fill-red-500" fontSize="9" fontWeight="600" letterSpacing="1">RISK</text>
     </svg>
   )
 }
