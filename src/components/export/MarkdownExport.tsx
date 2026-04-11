@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { toast } from "sonner"
 import { Copy, Download, RefreshCw, Eye, Code } from "lucide-react"
 import { marked } from "marked"
 import { Button } from "@/components/ui/button"
@@ -26,6 +27,7 @@ export function MarkdownExport({
   const handleCopy = () => {
     if (markdown) {
       navigator.clipboard.writeText(markdown)
+      toast.success("Markdown copied to clipboard")
     }
   }
 
@@ -38,6 +40,7 @@ export function MarkdownExport({
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
+    toast.success(`${title} downloaded`)
   }
 
   return (

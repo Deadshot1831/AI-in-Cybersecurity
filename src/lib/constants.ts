@@ -22,3 +22,14 @@ export const ANALYSIS_STATUS_MESSAGES: Record<string, string> = {
   complete: "Analysis complete",
   error: "Analysis failed",
 }
+
+export const ANALYSIS_STATUS_MESSAGES_PLAIN: Record<string, string> = {
+  idle: "Ready to check your system",
+  "parsing-input": "Reading your system description...",
+  "analyzing-owasp": "Checking for common AI safety issues...",
+  "analyzing-stride": "Looking for security weak spots...",
+  "analyzing-atlas": "Checking for known attack methods...",
+  correlating: "Putting it all together...",
+  complete: "Check complete!",
+  error: "Something went wrong",
+}

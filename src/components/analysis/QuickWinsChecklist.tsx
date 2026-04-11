@@ -138,10 +138,10 @@ export function QuickWinsChecklist() {
                             <span className={`text-sm font-medium ${isDone ? "line-through" : ""}`}>
                               {w.title}
                             </span>
-                            <Badge variant="outline" className={`text-[10px] ${SEVERITY_COLORS[w.threatSeverity]}`}>
+                            <Badge variant="outline" className={`text-[11px] ${SEVERITY_COLORS[w.threatSeverity]}`}>
                               {w.impactLevel}
                             </Badge>
-                            <Badge variant="secondary" className="text-[10px]">
+                            <Badge variant="secondary" className="text-[11px]">
                               {w.effortLabel}
                             </Badge>
                           </div>

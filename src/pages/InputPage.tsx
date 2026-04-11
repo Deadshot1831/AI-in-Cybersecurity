@@ -7,11 +7,13 @@ import { PageContainer } from "@/components/layout/PageContainer"
 import { SystemInputForm } from "@/components/input/SystemInputForm"
 import { useSystemStore } from "@/stores/useSystemStore"
 import { useAnalysisStore } from "@/stores/useAnalysisStore"
+import { useSettingsStore } from "@/stores/useSettingsStore"
 
 export function InputPage() {
   const navigate = useNavigate()
   const { architecture, freeformText, inputMode, reset: resetSystem } = useSystemStore()
   const { reset: resetAnalysis, requestAnalysis } = useAnalysisStore()
+  const plainEnglish = useSettingsStore((s) => s.plainEnglish)
 
   const canAnalyze =
     inputMode === "freeform"
@@ -33,10 +35,13 @@ export function InputPage() {
     <PageContainer>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">System Architecture Input</CardTitle>
+          <CardTitle className="text-2xl">
+            {plainEnglish ? "Tell Us About Your AI System" : "System Architecture Input"}
+          </CardTitle>
           <CardDescription>
-            Define your LLM/GenAI system architecture for threat modeling. Use freeform
-            natural language or build it step-by-step with the structured editor.
+            {plainEnglish
+              ? "Describe your AI system so we can check it for security issues. Answer simple questions, write a description, or use the technical editor."
+              : "Define your LLM/GenAI system architecture for threat modeling. Use freeform natural language or build it step-by-step with the structured editor."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -49,7 +54,7 @@ export function InputPage() {
               disabled={!canAnalyze}
               className="gap-2"
             >
-              <Zap className="h-4 w-4" /> Analyze Threats
+              <Zap className="h-4 w-4" /> {plainEnglish ? "Check for Problems" : "Analyze Threats"}
             </Button>
             <Button variant="outline" size="lg" onClick={handleReset} className="gap-2">
               <RotateCcw className="h-4 w-4" /> Reset
@@ -60,7 +65,11 @@ export function InputPage() {
             <Alert>
               <AlertDescription>
                 {inputMode === "freeform"
-                  ? "Enter a description of your system (at least 20 characters) to start the analysis."
+                  ? plainEnglish
+                    ? "Write a short description of your AI system (at least a sentence) so we can check it."
+                    : "Enter a description of your system (at least 20 characters) to start the analysis."
+                  : plainEnglish
+                  ? "Add at least one part of your AI system before we can check it."
                   : "Add at least one component to your system architecture to start the analysis."}
               </AlertDescription>
             </Alert>

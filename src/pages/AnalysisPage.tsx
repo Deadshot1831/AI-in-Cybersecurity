@@ -175,7 +175,7 @@ export function AnalysisPage() {
                   <QuickWinsButton />
                 )}
               </div>
-              <ScrollArea className="h-[calc(100vh-500px)] min-h-[400px]">
+              <ScrollArea className="h-[min(60vh,800px)] min-h-[400px]">
                 <div className="space-y-3 pr-4">
                   {filteredThreats.map((threat, i) => (
                     <div

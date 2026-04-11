@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { toast } from "sonner"
 import { Copy, Download, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -49,6 +50,7 @@ export function MermaidExport() {
   const handleCopySyntax = () => {
     if (mermaidData) {
       navigator.clipboard.writeText(mermaidData.diagramSyntax)
+      toast.success("Mermaid syntax copied to clipboard")
     }
   }
 
@@ -61,6 +63,7 @@ export function MermaidExport() {
     a.download = "threat-model-diagram.svg"
     a.click()
     URL.revokeObjectURL(url)
+    toast.success("SVG diagram downloaded")
   }
 
   if (!result) {

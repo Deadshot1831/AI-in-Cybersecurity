@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary"
@@ -16,6 +17,7 @@ function App() {
       <TooltipProvider>
       <ErrorBoundary>
         <BrowserRouter>
+          <Toaster theme="system" position="bottom-right" richColors />
           <div className="flex min-h-screen flex-col bg-background text-foreground">
             <Header />
             <Routes>

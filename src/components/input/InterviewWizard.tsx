@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import { ChevronRight, ChevronLeft, Sparkles, CheckCircle2, Globe, Bot, BookOpen, Lock, Zap, Key, RefreshCw, Server } from "lucide-react"
+import { ChevronRight, ChevronLeft, Sparkles, CheckCircle2, Globe, Bot, BookOpen, Lock, Zap, Key, RefreshCw, Server, X, Check, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -314,6 +314,19 @@ export function InterviewWizard() {
             <p className="text-xs text-muted-foreground text-center max-w-sm">
               Switch to <strong>"Structured Input"</strong> to review components, or click <strong>"Analyze Threats"</strong> to start.
             </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-muted-foreground"
+              onClick={() => {
+                setIsComplete(false)
+                setCurrentStep(0)
+                setAnswers({})
+                setSystemName("")
+              }}
+            >
+              <RotateCcw className="h-3.5 w-3.5" /> Start Over
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -407,7 +420,11 @@ export function InterviewWizard() {
                     className="group relative rounded-xl border-2 border-foreground/10 bg-background/40 hover:bg-background/60 hover:border-foreground/20 p-5 transition-all duration-200 text-left active:scale-[0.98]"
                   >
                     <div className="text-center space-y-2">
-                      <div className="text-3xl">&#x274C;</div>
+                      <div className="flex justify-center">
+                        <div className="rounded-full bg-muted p-2">
+                          <X className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      </div>
                       <span className="text-base font-semibold block">No</span>
                       <span className="text-xs text-muted-foreground block">Skip this feature</span>
                     </div>
@@ -417,7 +434,11 @@ export function InterviewWizard() {
                     className="group relative rounded-xl border-2 border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 p-5 transition-all duration-200 text-left active:scale-[0.98]"
                   >
                     <div className="text-center space-y-2">
-                      <div className="text-3xl">&#x2705;</div>
+                      <div className="flex justify-center">
+                        <div className="rounded-full bg-green-500/20 p-2">
+                          <Check className="h-6 w-6 text-green-500" />
+                        </div>
+                      </div>
                       <span className="text-base font-semibold block">Yes</span>
                       <span className="text-xs text-muted-foreground block">My system has this</span>
                     </div>

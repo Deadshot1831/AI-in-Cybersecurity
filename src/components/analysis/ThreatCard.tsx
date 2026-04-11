@@ -197,7 +197,7 @@ export function ThreatCard({ threat, componentNames }: ThreatCardProps) {
                         <span className="font-medium text-xs">{impact.category}</span>
                         <Badge
                           variant="outline"
-                          className={`text-[10px] ml-auto ${
+                          className={`text-[11px] ml-auto ${
                             impact.severity === "high" ? "text-red-500" : "text-yellow-500"
                           }`}
                         >

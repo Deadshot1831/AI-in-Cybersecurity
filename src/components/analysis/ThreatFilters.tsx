@@ -61,7 +61,7 @@ export function ThreatFilters() {
   return (
     <div className="space-y-4">
       <div>
-        <Label className="text-xs font-semibold uppercase text-muted-foreground">
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {plainEnglish ? "Security Standards" : "Frameworks"}
         </Label>
         <div className="flex flex-wrap gap-1.5 mt-2">
@@ -81,7 +81,7 @@ export function ThreatFilters() {
       <Separator />
 
       <div>
-        <Label className="text-xs font-semibold uppercase text-muted-foreground">
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {plainEnglish ? "Urgency" : "Severity"}
         </Label>
         <div className="flex flex-wrap gap-1.5 mt-2">
@@ -103,7 +103,7 @@ export function ThreatFilters() {
         <>
           <Separator />
           <div>
-            <Label className="text-xs font-semibold uppercase text-muted-foreground">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {plainEnglish ? "System Parts" : "Components"}
             </Label>
             <div className="flex flex-wrap gap-1.5 mt-2">

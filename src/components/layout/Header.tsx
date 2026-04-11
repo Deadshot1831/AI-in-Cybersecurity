@@ -7,17 +7,20 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 import { ApiKeyInput } from "@/components/shared/ApiKeyInput"
 import { LiveModeToggle } from "@/components/shared/LiveModeToggle"
 import { PlainEnglishToggle } from "@/components/shared/PlainEnglishToggle"
+import { useSettingsStore } from "@/stores/useSettingsStore"
 import { cn } from "@/lib/utils"
 
-const navItems = [
-  { path: "/", label: "Home" },
-  { path: "/input", label: "Input" },
-  { path: "/analysis", label: "Analysis" },
-  { path: "/export", label: "Export" },
+const NAV_ITEMS = [
+  { path: "/", label: "Home", plainLabel: "Home" },
+  { path: "/input", label: "Input", plainLabel: "Describe" },
+  { path: "/analysis", label: "Analysis", plainLabel: "Report" },
+  { path: "/export", label: "Export", plainLabel: "Download" },
 ]
 
 export function Header() {
   const location = useLocation()
+  const plainEnglish = useSettingsStore((s) => s.plainEnglish)
+  const navItems = NAV_ITEMS
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -38,7 +41,7 @@ export function Header() {
                   location.pathname === item.path && "font-medium"
                 )}
               >
-                {item.label}
+                {plainEnglish ? item.plainLabel : item.label}
               </Button>
             </Link>
           ))}

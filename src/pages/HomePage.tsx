@@ -45,10 +45,17 @@ export function HomePage() {
       ]
 
   return (
-    <div className="flex flex-col items-center gap-12 py-12">
-      <div className="text-center max-w-2xl">
+    <div className="flex flex-col items-center gap-12 py-12 relative">
+      {/* Background gradient accents */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute top-20 -left-20 w-[300px] h-[300px] rounded-full bg-blue-500/5 blur-3xl" />
+        <div className="absolute top-40 -right-20 w-[300px] h-[300px] rounded-full bg-purple-500/5 blur-3xl" />
+      </div>
+
+      <div className="text-center max-w-2xl relative">
         <div className="flex justify-center mb-6">
-          <div className="rounded-full bg-primary/10 p-4">
+          <div className="rounded-full bg-primary/10 p-4 ring-1 ring-primary/20 shadow-lg shadow-primary/5">
             <Shield className="h-12 w-12 text-primary" />
           </div>
         </div>

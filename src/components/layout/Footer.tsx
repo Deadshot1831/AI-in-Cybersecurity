@@ -1,6 +1,9 @@
 import { Shield } from "lucide-react"
+import { useSettingsStore } from "@/stores/useSettingsStore"
 
 export function Footer() {
+  const plainEnglish = useSettingsStore((s) => s.plainEnglish)
+
   return (
     <footer className="border-t border-border bg-background/95 py-6 mt-auto">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -10,7 +13,9 @@ export function Footer() {
             <span>AI Threat Modeler</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Powered by OWASP LLM Top 10, STRIDE, and MITRE ATLAS frameworks
+            {plainEnglish
+              ? "Checks your AI system against 3 industry security standards"
+              : "Powered by OWASP LLM Top 10, STRIDE, and MITRE ATLAS frameworks"}
           </p>
         </div>
       </div>

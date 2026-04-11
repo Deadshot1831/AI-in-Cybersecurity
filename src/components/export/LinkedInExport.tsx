@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { toast } from "sonner"
 import { Download, RefreshCw, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -36,8 +37,10 @@ export function LinkedInExport() {
       a.download = `linkedin-carousel-${system.name.toLowerCase().replace(/\s+/g, "-")}.pdf`
       a.click()
       URL.revokeObjectURL(url)
+      toast.success("PDF carousel downloaded")
     } catch (e) {
       console.error("PDF generation failed:", e)
+      toast.error("PDF generation failed")
     } finally {
       setIsPdfGenerating(false)
     }
