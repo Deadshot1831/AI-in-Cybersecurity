@@ -88,7 +88,7 @@ function AnimatedGaugeSVG({ score }: { score: number }) {
   const glowColor = animatedScore > 75 ? "#ef4444" : animatedScore > 50 ? "#f97316" : animatedScore > 25 ? "#eab308" : "#22c55e"
 
   return (
-    <svg viewBox="0 0 200 145" className="w-full max-w-[280px] mx-auto drop-shadow-lg">
+    <svg viewBox="0 0 200 160" className="w-full max-w-[280px] mx-auto drop-shadow-lg">
       <defs>
         <filter id="gauge-glow" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="3" result="blur" />
@@ -144,9 +144,9 @@ function AnimatedGaugeSVG({ score }: { score: number }) {
         {animatedScore}
       </text>
 
-      {/* Labels — aligned to arc endpoints */}
-      <text x="31" y="143" textAnchor="middle" className="fill-green-500" fontSize="9" fontWeight="600" letterSpacing="1">SAFE</text>
-      <text x="169" y="143" textAnchor="middle" className="fill-red-500" fontSize="9" fontWeight="600" letterSpacing="1">RISK</text>
+      {/* Labels — positioned below arc endpoints */}
+      <text x="31" y="155" textAnchor="middle" className="fill-green-500" fontSize="9" fontWeight="600" letterSpacing="1">SAFE</text>
+      <text x="169" y="155" textAnchor="middle" className="fill-red-500" fontSize="9" fontWeight="600" letterSpacing="1">RISK</text>
     </svg>
   )
 }
