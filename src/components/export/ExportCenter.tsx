@@ -1,8 +1,19 @@
+import { lazy, Suspense } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Skeleton } from "@/components/ui/skeleton"
 import { GitBranch, FileText, Network, Share2 } from "lucide-react"
-import { MermaidExport } from "./MermaidExport"
 import { MarkdownExport } from "./MarkdownExport"
-import { LinkedInExport } from "./LinkedInExport"
+
+const MermaidExport = lazy(() =>
+  import("./MermaidExport").then((m) => ({ default: m.MermaidExport }))
+)
+const LinkedInExport = lazy(() =>
+  import("./LinkedInExport").then((m) => ({ default: m.LinkedInExport }))
+)
+
+function TabFallback() {
+  return <div className="space-y-4 py-4"><Skeleton className="h-10 w-48" /><Skeleton className="h-[300px] w-full" /></div>
+}
 import { useAnalysisStore } from "@/stores/useAnalysisStore"
 import { useSystemStore } from "@/stores/useSystemStore"
 import { useSettingsStore } from "@/stores/useSettingsStore"
@@ -53,7 +64,9 @@ export function ExportCenter() {
       </TabsList>
 
       <TabsContent value="mermaid" className="mt-6">
-        <MermaidExport />
+        <Suspense fallback={<TabFallback />}>
+          <MermaidExport />
+        </Suspense>
       </TabsContent>
 
       <TabsContent value="blog" className="mt-6">
@@ -76,7 +89,9 @@ export function ExportCenter() {
       </TabsContent>
 
       <TabsContent value="linkedin" className="mt-6">
-        <LinkedInExport />
+        <Suspense fallback={<TabFallback />}>
+          <LinkedInExport />
+        </Suspense>
       </TabsContent>
     </Tabs>
   )
