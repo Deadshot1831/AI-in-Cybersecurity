@@ -12,6 +12,7 @@ import { HomePage } from "@/pages/HomePage"
 import { InputPage } from "@/pages/InputPage"
 import { AnalysisPage } from "@/pages/AnalysisPage"
 import { LoginPage } from "@/pages/auth/LoginPage"
+import { AuthCallbackPage } from "@/pages/auth/AuthCallbackPage"
 import { useAuthStore } from "@/stores/useAuthStore"
 
 const ExportPage = lazy(() =>
@@ -40,13 +41,15 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
   const location = useLocation()
-  const isAuthRoute = location.pathname.startsWith("/login")
+  const isAuthRoute =
+    location.pathname.startsWith("/login") || location.pathname.startsWith("/auth/")
 
   if (isAuthRoute) {
     return (
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
         </Routes>
       </Suspense>
     )
