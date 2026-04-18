@@ -50,9 +50,10 @@ export function AnalysisPage() {
     return (
       <PageContainer>
         <div className="flex flex-col items-center justify-center py-20 gap-6">
-          <div className="relative">
+          <div className="relative animate-float-y">
             <ShieldAlert className="h-16 w-16 text-muted-foreground" />
             <div className="absolute -inset-4 rounded-full border border-muted-foreground/10 animate-pulse" />
+            <span className="absolute inset-0 rounded-full bg-muted-foreground/10 animate-pulse-ring" aria-hidden="true" />
           </div>
           <div className="text-center max-w-md">
             <h2 className="text-xl font-semibold mb-2">

@@ -54,27 +54,37 @@ export function HomePage() {
       </div>
 
       <div className="text-center max-w-2xl relative">
-        <div className="flex justify-center mb-6">
-          <div className="rounded-full bg-primary/10 p-4 ring-1 ring-primary/20 shadow-lg shadow-primary/5">
-            <Shield className="h-12 w-12 text-primary" />
+        <div className="flex justify-center mb-6 animate-fade-up" style={{ animationDelay: "40ms" }}>
+          <div className="relative rounded-full bg-primary/10 p-4 ring-1 ring-primary/20 shadow-lg shadow-primary/5 animate-float-y">
+            <span className="absolute inset-0 rounded-full bg-primary/20 animate-pulse-ring" aria-hidden="true" />
+            <Shield className="h-12 w-12 text-primary relative" />
           </div>
         </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
+        <h1
+          className="text-4xl sm:text-5xl font-bold tracking-tight mb-4 animate-fade-up bg-gradient-to-r from-foreground via-foreground to-primary/70 bg-clip-text text-transparent"
+          style={{ animationDelay: "120ms" }}
+        >
           AI Threat Modeler
         </h1>
-        <p className="text-lg text-muted-foreground mb-4">
+        <p
+          className="text-lg text-muted-foreground mb-4 animate-fade-up"
+          style={{ animationDelay: "200ms" }}
+        >
           {plainEnglish
             ? "Find out if your AI system is safe. Answer a few simple questions and get a clear security report with actionable steps - no cybersecurity expertise needed."
             : "Map your LLM and GenAI system architecture, identify security threats across OWASP, STRIDE, and MITRE ATLAS frameworks, and generate professional security artifacts."}
         </p>
         {plainEnglish && (
-          <Badge variant="secondary" className="mb-6 gap-1.5">
+          <Badge variant="secondary" className="mb-6 gap-1.5 animate-fade-up" style={{ animationDelay: "260ms" }}>
             <Languages className="h-3.5 w-3.5" /> Plain English Mode Active
           </Badge>
         )}
-        <div className="flex justify-center gap-3 mt-4">
-          <Link to="/input">
-            <Button size="lg" className="gap-2">
+        <div
+          className="flex justify-center gap-3 mt-4 animate-fade-up"
+          style={{ animationDelay: "300ms" }}
+        >
+          <Link to="/input" className="inline-block">
+            <Button size="lg" className="gap-2 shimmer-host magnetic-glow">
               {plainEnglish ? "Check My AI System" : "Get Started"} <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -82,11 +92,17 @@ export function HomePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
-        {features.map((feature) => (
-          <Card key={feature.title} className="text-center">
+        {features.map((feature, i) => (
+          <Card
+            key={feature.title}
+            className="text-center animate-fade-up group cursor-default"
+            style={{ animationDelay: `${360 + i * 90}ms` }}
+          >
             <CardHeader>
               <div className="flex justify-center mb-3">
-                <feature.icon className="h-8 w-8 text-muted-foreground" />
+                <div className="rounded-xl bg-primary/5 p-3 ring-1 ring-primary/10 transition-all duration-300 group-hover:bg-primary/10 group-hover:ring-primary/30 group-hover:scale-110">
+                  <feature.icon className="h-8 w-8 text-muted-foreground transition-colors duration-300 group-hover:text-primary" />
+                </div>
               </div>
               <CardTitle className="text-lg">{feature.title}</CardTitle>
               <CardDescription>{feature.description}</CardDescription>

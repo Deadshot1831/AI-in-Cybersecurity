@@ -31,20 +31,24 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
-          {navItems.map((item) => (
-            <Link key={item.path} to={item.path}>
-              <Button
-                variant={location.pathname === item.path ? "secondary" : "ghost"}
-                size="sm"
-                className={cn(
-                  "text-sm",
-                  location.pathname === item.path && "font-medium"
-                )}
-              >
-                {plainEnglish ? item.plainLabel : item.label}
-              </Button>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const active = location.pathname === item.path
+            return (
+              <Link key={item.path} to={item.path}>
+                <Button
+                  variant={active ? "secondary" : "ghost"}
+                  size="sm"
+                  data-active={active}
+                  className={cn(
+                    "text-sm nav-underline",
+                    active && "font-medium"
+                  )}
+                >
+                  {plainEnglish ? item.plainLabel : item.label}
+                </Button>
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="flex items-center gap-2">

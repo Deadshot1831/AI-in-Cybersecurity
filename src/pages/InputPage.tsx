@@ -8,6 +8,7 @@ import { SystemInputForm } from "@/components/input/SystemInputForm"
 import { useSystemStore } from "@/stores/useSystemStore"
 import { useAnalysisStore } from "@/stores/useAnalysisStore"
 import { useSettingsStore } from "@/stores/useSettingsStore"
+import { cn } from "@/lib/utils"
 
 export function InputPage() {
   const navigate = useNavigate()
@@ -33,7 +34,7 @@ export function InputPage() {
 
   return (
     <PageContainer>
-      <Card>
+      <Card className="animate-fade-up">
         <CardHeader>
           <CardTitle className="text-2xl">
             {plainEnglish ? "Tell Us About Your AI System" : "System Architecture Input"}
@@ -52,9 +53,13 @@ export function InputPage() {
               size="lg"
               onClick={handleAnalyze}
               disabled={!canAnalyze}
-              className="gap-2"
+              className={cn(
+                "gap-2",
+                canAnalyze && "shimmer-host magnetic-glow"
+              )}
             >
-              <Zap className="h-4 w-4" /> {plainEnglish ? "Check for Problems" : "Analyze Threats"}
+              <Zap className={cn("h-4 w-4", canAnalyze && "animate-pulse")} />
+              {plainEnglish ? "Check for Problems" : "Analyze Threats"}
             </Button>
             <Button variant="outline" size="lg" onClick={handleReset} className="gap-2">
               <RotateCcw className="h-4 w-4" /> Reset
