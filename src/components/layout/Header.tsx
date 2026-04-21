@@ -3,7 +3,6 @@ import { Shield, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
-import { ThemeToggle } from "@/components/ThemeToggle"
 import { ApiKeyInput } from "@/components/shared/ApiKeyInput"
 import { LiveModeToggle } from "@/components/shared/LiveModeToggle"
 import { PlainEnglishToggle } from "@/components/shared/PlainEnglishToggle"
@@ -73,7 +72,6 @@ export function Header() {
             <ApiKeyInput />
             <Separator orientation="vertical" className="h-5 bg-border" />
           </div>
-          <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">

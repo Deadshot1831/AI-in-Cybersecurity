@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect } from "react"
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
 import { Toaster } from "sonner"
-import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary"
 import { Header } from "@/components/layout/Header"
@@ -98,16 +97,14 @@ function App() {
   }, [initialize])
 
   return (
-    <ThemeProvider defaultTheme="dark">
-      <TooltipProvider>
-        <ErrorBoundary>
-          <BrowserRouter>
-            <Toaster theme="system" position="bottom-right" richColors />
-            <AppRoutes />
-          </BrowserRouter>
-        </ErrorBoundary>
-      </TooltipProvider>
-    </ThemeProvider>
+    <TooltipProvider>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <Toaster theme="dark" position="bottom-right" richColors />
+          <AppRoutes />
+        </BrowserRouter>
+      </ErrorBoundary>
+    </TooltipProvider>
   )
 }
 
