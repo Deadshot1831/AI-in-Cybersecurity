@@ -23,25 +23,38 @@ export function Header() {
   const navItems = NAV_ITEMS
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2 font-semibold text-lg">
-          <Shield className="h-6 w-6 text-primary" />
-          <span className="hidden sm:inline">AI Threat Modeler</span>
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-md">
+      {/* HUD status strip */}
+      <div className="h-1 w-full bg-gradient-to-r from-accent via-[color:var(--accent-tertiary)] to-[color:var(--accent-secondary)] opacity-80" />
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link
+          to="/"
+          className="group flex items-center gap-2 font-[family-name:var(--font-display)] uppercase tracking-[0.22em] text-sm font-bold"
+        >
+          <span className="relative grid h-7 w-7 place-items-center border border-accent cyber-chamfer-sm text-accent transition-shadow group-hover:shadow-[0_0_6px_#00ff88,0_0_14px_rgba(0,255,136,0.6)]">
+            <Shield className="h-4 w-4" strokeWidth={1.5} />
+          </span>
+          <span className="hidden sm:flex items-baseline gap-1.5">
+            <span className="text-muted-foreground text-[10px] tracking-[0.3em]">//</span>
+            <span className="text-foreground">NIGHTFALL</span>
+            <span className="text-accent">.SEC</span>
+          </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-0">
           {navItems.map((item) => {
             const active = location.pathname === item.path
             return (
               <Link key={item.path} to={item.path}>
                 <Button
-                  variant={active ? "secondary" : "ghost"}
+                  variant="ghost"
                   size="sm"
                   data-active={active}
                   className={cn(
-                    "text-sm nav-underline",
-                    active && "font-medium"
+                    "nav-underline px-3 text-[10px]",
+                    active
+                      ? "text-accent"
+                      : "text-muted-foreground hover:text-accent"
                   )}
                 >
                   {plainEnglish ? item.plainLabel : item.label}
@@ -54,11 +67,11 @@ export function Header() {
         <div className="flex items-center gap-2">
           <div className="hidden sm:flex items-center gap-2">
             <PlainEnglishToggle />
-            <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="h-5 bg-border" />
             <LiveModeToggle />
-            <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="h-5 bg-border" />
             <ApiKeyInput />
-            <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="h-5 bg-border" />
           </div>
           <ThemeToggle />
           <Sheet>
@@ -72,7 +85,7 @@ export function Header() {
                 {navItems.map((item) => (
                   <Link key={item.path} to={item.path}>
                     <Button
-                      variant={location.pathname === item.path ? "secondary" : "ghost"}
+                      variant={location.pathname === item.path ? "default" : "ghost"}
                       className="w-full justify-start"
                     >
                       {item.label}
