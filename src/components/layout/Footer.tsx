@@ -14,7 +14,7 @@ export function Footer() {
             <span className="relative grid h-6 w-6 place-items-center border border-accent/60 cyber-chamfer-sm text-accent">
               <Shield className="h-3.5 w-3.5" strokeWidth={1.5} />
             </span>
-            <span className="text-accent">[ NIGHTFALL.SEC ]</span>
+            <span className="text-accent">[ AI Threat Modeler ]</span>
             <span className="text-muted-foreground">v0.1.0</span>
           </div>
           <div className="flex items-center gap-2">

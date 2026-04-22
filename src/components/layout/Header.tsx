@@ -35,8 +35,8 @@ export function Header() {
           </span>
           <span className="hidden sm:flex items-baseline gap-1.5">
             <span className="text-muted-foreground text-[10px] tracking-[0.3em]">//</span>
-            <span className="text-foreground">NIGHTFALL</span>
-            <span className="text-accent">.SEC</span>
+            <span className="text-foreground">AI Threat</span>
+            <span className="text-accent">Modeler</span>
           </span>
         </Link>
 
