@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { User, Session, AuthError } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
 interface AuthState {
   user: User | null
@@ -20,18 +20,19 @@ interface AuthState {
   clearError: () => void
 }
 
-const isDemoMode = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY
+const NOT_CONFIGURED_MSG =
+  'Authentication is not configured on this deployment. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in the hosting provider and redeploy.'
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   session: null,
   isLoading: true,
   error: null,
-  isDemo: isDemoMode,
+  isDemo: !isSupabaseConfigured,
 
   initialize: async () => {
-    if (isDemoMode) {
-      set({ isLoading: false, isDemo: true })
+    if (!isSupabaseConfigured) {
+      set({ isLoading: false, isDemo: true, user: null, session: null })
       return
     }
 
@@ -44,7 +45,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
       })
 
-      // Listen for auth state changes (login, logout, token refresh)
       supabase.auth.onAuthStateChange((_event, session) => {
         set({
           session,
@@ -58,36 +58,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   signInWithEmail: async (email, password) => {
-    set({ isLoading: true, error: null })
     if (get().isDemo) {
-      // Demo mode: simulate login
-      await new Promise(r => setTimeout(r, 800))
-      set({
-        user: { id: 'demo-user', email, user_metadata: { full_name: 'Demo User' } } as unknown as User,
-        isLoading: false,
-      })
+      set({ error: NOT_CONFIGURED_MSG, isLoading: false, user: null, session: null })
       return
     }
+    set({ isLoading: true, error: null })
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
       set({ isLoading: false })
     } catch (err) {
       const authErr = err as AuthError
-      set({ error: authErr.message, isLoading: false })
+      set({ error: authErr.message, isLoading: false, user: null, session: null })
     }
   },
 
   signUpWithEmail: async (email, password, fullName) => {
-    set({ isLoading: true, error: null })
     if (get().isDemo) {
-      await new Promise(r => setTimeout(r, 800))
-      set({
-        user: { id: 'demo-user', email, user_metadata: { full_name: fullName ?? 'Demo User' } } as unknown as User,
-        isLoading: false,
-      })
+      set({ error: NOT_CONFIGURED_MSG, isLoading: false, user: null, session: null })
       return
     }
+    set({ isLoading: true, error: null })
     try {
       const { error } = await supabase.auth.signUp({
         email,
@@ -98,24 +89,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: false })
     } catch (err) {
       const authErr = err as AuthError
-      set({ error: authErr.message, isLoading: false })
+      set({ error: authErr.message, isLoading: false, user: null, session: null })
     }
   },
 
   signInWithOAuth: async (provider) => {
-    set({ isLoading: true, error: null })
     if (get().isDemo) {
-      await new Promise(r => setTimeout(r, 800))
-      set({
-        user: {
-          id: `demo-${provider}`,
-          email: `demo@${provider}.com`,
-          user_metadata: { full_name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`, avatar_url: '' },
-        } as unknown as User,
-        isLoading: false,
-      })
+      set({ error: NOT_CONFIGURED_MSG, isLoading: false, user: null, session: null })
       return
     }
+    set({ isLoading: true, error: null })
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -124,17 +107,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (error) throw error
     } catch (err) {
       const authErr = err as AuthError
-      set({ error: authErr.message, isLoading: false })
+      set({ error: authErr.message, isLoading: false, user: null, session: null })
     }
   },
 
   signInWithMagicLink: async (email) => {
-    set({ isLoading: true, error: null })
     if (get().isDemo) {
-      await new Promise(r => setTimeout(r, 800))
-      set({ error: null, isLoading: false })
+      set({ error: NOT_CONFIGURED_MSG, isLoading: false })
       return
     }
+    set({ isLoading: true, error: null })
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email,
@@ -165,12 +147,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   resetPassword: async (email) => {
-    set({ isLoading: true, error: null })
     if (get().isDemo) {
-      await new Promise(r => setTimeout(r, 800))
-      set({ isLoading: false })
+      set({ error: NOT_CONFIGURED_MSG, isLoading: false })
       return
     }
+    set({ isLoading: true, error: null })
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback`,
