@@ -20,6 +20,7 @@ export function LoginPage() {
   const clearError = useAuthStore((s) => s.clearError)
   const resetPassword = useAuthStore((s) => s.resetPassword)
   const location = useLocation()
+  const authError = useAuthStore((s) => s.error)
 
   const [view, setView] = useState<View>("tabs")
   const [tab, setTab] = useState<"signin" | "signup">("signin")
@@ -38,7 +39,14 @@ export function LoginPage() {
   const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!resetEmail) return
+    clearError()
     await resetPassword(resetEmail)
+    if (useAuthStore.getState().error) {
+      toast.error("Reset link could not be sent", {
+        description: useAuthStore.getState().error ?? undefined,
+      })
+      return
+    }
     setResetSent(true)
     toast.success("Password reset email sent", {
       description: "Check your inbox for a reset link.",
@@ -163,7 +171,12 @@ export function LoginPage() {
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full">
+                  {authError && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{authError}</AlertDescription>
+                    </Alert>
+                  )}
+                  <Button type="submit" className="w-full" disabled={isDemo}>
                     Send reset link
                   </Button>
                 </form>
