@@ -6,7 +6,9 @@ import { Separator } from "@/components/ui/separator"
 import { ApiKeyInput } from "@/components/shared/ApiKeyInput"
 import { LiveModeToggle } from "@/components/shared/LiveModeToggle"
 import { PlainEnglishToggle } from "@/components/shared/PlainEnglishToggle"
+import { UserMenu } from "@/components/auth/UserMenu"
 import { useSettingsStore } from "@/stores/useSettingsStore"
+import { useAuthStore } from "@/stores/useAuthStore"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
@@ -19,6 +21,7 @@ const NAV_ITEMS = [
 export function Header() {
   const location = useLocation()
   const plainEnglish = useSettingsStore((s) => s.plainEnglish)
+  const user = useAuthStore((s) => s.user)
   const navItems = NAV_ITEMS
 
   return (
@@ -71,6 +74,12 @@ export function Header() {
             <Separator orientation="vertical" className="h-5 bg-border" />
             <ApiKeyInput />
             <Separator orientation="vertical" className="h-5 bg-border" />
+            {user && (
+              <>
+                <UserMenu variant="header" />
+                <Separator orientation="vertical" className="h-5 bg-border" />
+              </>
+            )}
           </div>
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
@@ -98,6 +107,12 @@ export function Header() {
                   <LiveModeToggle />
                 </div>
                 <ApiKeyInput />
+                {user && (
+                  <>
+                    <Separator className="my-2" />
+                    <UserMenu variant="sheet" />
+                  </>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
