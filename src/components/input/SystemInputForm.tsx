@@ -16,12 +16,21 @@ export function SystemInputForm() {
     // "wizard" keeps inputMode as-is until wizard completes (it sets "structured")
   }
 
+  const triggerCls =
+    "whitespace-normal text-center leading-tight text-[11px] sm:text-sm py-2 h-auto"
+
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange}>
-      <TabsList className="grid w-full grid-cols-3 max-w-lg">
-        <TabsTrigger value="wizard">Guided Interview</TabsTrigger>
-        <TabsTrigger value="freeform">Describe in Words</TabsTrigger>
-        <TabsTrigger value="structured">Technical Editor</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 sm:max-w-lg h-auto gap-1">
+        <TabsTrigger value="wizard" className={triggerCls}>
+          Guided Interview
+        </TabsTrigger>
+        <TabsTrigger value="freeform" className={triggerCls}>
+          Describe in Words
+        </TabsTrigger>
+        <TabsTrigger value="structured" className={triggerCls}>
+          Technical Editor
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="wizard" className="mt-6">
         <InterviewWizard />

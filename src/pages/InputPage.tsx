@@ -48,20 +48,25 @@ export function InputPage() {
         <CardContent className="space-y-6">
           <SystemInputForm />
 
-          <div className="flex items-center gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-4">
             <Button
               size="lg"
               onClick={handleAnalyze}
               disabled={!canAnalyze}
               className={cn(
-                "gap-2",
+                "gap-2 w-full sm:w-auto",
                 canAnalyze && "shimmer-host magnetic-glow"
               )}
             >
               <Zap className={cn("h-4 w-4", canAnalyze && "animate-pulse")} />
               {plainEnglish ? "Check for Problems" : "Analyze Threats"}
             </Button>
-            <Button variant="outline" size="lg" onClick={handleReset} className="gap-2">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={handleReset}
+              className="gap-2 w-full sm:w-auto"
+            >
               <RotateCcw className="h-4 w-4" /> Reset
             </Button>
           </div>
