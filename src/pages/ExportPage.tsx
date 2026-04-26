@@ -15,9 +15,9 @@ export function ExportPage() {
 
   return (
     <PageContainer>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold">
             {plainEnglish ? "Download Your Report" : "Export Center"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -26,7 +26,11 @@ export function ExportPage() {
               : "Export your threat analysis as diagrams, reports, and presentations."}
           </p>
         </div>
-        <Button variant="outline" onClick={() => navigate("/analysis")} className="gap-2">
+        <Button
+          variant="outline"
+          onClick={() => navigate("/analysis")}
+          className="gap-2 w-full sm:w-auto sm:shrink-0"
+        >
           <ArrowLeft className="h-4 w-4" /> {plainEnglish ? "Back to Report" : "Back to Analysis"}
         </Button>
       </div>

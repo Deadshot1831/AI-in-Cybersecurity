@@ -76,10 +76,10 @@ export function AnalysisPage() {
   return (
     <PageContainer>
       {/* SOC-style header bar */}
-      <div className="glass rounded-xl p-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative">
+      <div className="glass rounded-xl p-3 sm:p-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-start gap-3 min-w-0">
+            <div className="relative shrink-0 mt-0.5">
               <Shield className="h-6 w-6 text-primary" />
               {status === "complete" && result && (
                 <div className={`absolute -top-1 -right-1 h-3 w-3 rounded-full ${
@@ -89,8 +89,8 @@ export function AnalysisPage() {
                 }`} />
               )}
             </div>
-            <div>
-              <h1 className="text-xl font-bold flex items-center gap-2">
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-bold flex flex-wrap items-center gap-2">
                 {plainEnglish ? "Security Report" : "Threat Analysis"}
                 {status === "complete" && (
                   <Badge variant="outline" className="text-xs font-normal gap-1">
@@ -109,12 +109,21 @@ export function AnalysisPage() {
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate("/input")} className="gap-2">
+          <div className="flex gap-2 sm:shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/input")}
+              className="gap-2 flex-1 sm:flex-initial"
+            >
               <ArrowLeft className="h-4 w-4" /> {plainEnglish ? "Edit" : "Input"}
             </Button>
             {status === "complete" && (
-              <Button size="sm" onClick={() => navigate("/export")} className="gap-2">
+              <Button
+                size="sm"
+                onClick={() => navigate("/export")}
+                className="gap-2 flex-1 sm:flex-initial"
+              >
                 <FileDown className="h-4 w-4" /> {plainEnglish ? "Download" : "Export"}
               </Button>
             )}
@@ -176,7 +185,7 @@ export function AnalysisPage() {
                   <QuickWinsButton />
                 )}
               </div>
-              <ScrollArea className="h-[min(60vh,800px)] min-h-[400px]">
+              <ScrollArea className="h-[min(70vh,800px)] min-h-[300px] sm:min-h-[400px]">
                 <div className="space-y-3 pr-4">
                   {filteredThreats.map((threat, i) => (
                     <div

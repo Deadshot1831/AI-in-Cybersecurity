@@ -8,16 +8,16 @@ export function Footer() {
     <footer className="relative mt-auto border-t border-border bg-background/90">
       {/* top HUD strip */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 font-[family-name:var(--font-terminal)] uppercase tracking-[0.2em] text-[10px] text-muted-foreground">
-          <div className="flex items-center gap-3">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 font-[family-name:var(--font-terminal)] uppercase tracking-[0.18em] sm:tracking-[0.2em] text-[9px] sm:text-[10px] text-muted-foreground text-center sm:text-left">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
             <span className="relative grid h-6 w-6 place-items-center border border-accent/60 cyber-chamfer-sm text-accent">
               <Shield className="h-3.5 w-3.5" strokeWidth={1.5} />
             </span>
             <span className="text-accent">[ AI Threat Modeler ]</span>
             <span className="text-muted-foreground">v0.1.0</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap justify-center">
             <Radio className="h-3 w-3 text-accent animate-pulse" strokeWidth={1.5} />
             <span>
               {plainEnglish

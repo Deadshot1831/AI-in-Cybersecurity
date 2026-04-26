@@ -367,14 +367,14 @@ export function InterviewWizard() {
       <div key={animKey} className="animate-wizard-slide-in">
         <Card className={`overflow-hidden border-0 shadow-lg bg-gradient-to-br ${step.gradient}`}>
           {/* Illustration Header */}
-          <div className="relative px-6 pt-6 pb-4">
-            <div className="flex items-center gap-4">
-              <div className={`rounded-2xl p-3 bg-gradient-to-br ${step.gradient} border border-white/10 shadow-inner`}>
-                <StepIcon className="h-8 w-8 text-foreground" />
+          <div className="relative px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
+            <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+              <div className={`rounded-2xl p-2.5 sm:p-3 bg-gradient-to-br ${step.gradient} border border-white/10 shadow-inner shrink-0`}>
+                <StepIcon className="h-6 w-6 sm:h-8 sm:w-8 text-foreground" />
               </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-bold leading-snug">{step.question}</h2>
-                <p className="text-sm text-muted-foreground mt-1">{step.helpText}</p>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-base sm:text-lg font-bold leading-snug break-words">{step.question}</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">{step.helpText}</p>
               </div>
             </div>
             {/* Subtle context hint */}
@@ -385,7 +385,7 @@ export function InterviewWizard() {
             </div>
           </div>
 
-          <CardContent className="pt-2 pb-6">
+          <CardContent className="px-4 sm:px-6 pt-2 pb-5 sm:pb-6">
             {isNameStep ? (
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -414,10 +414,10 @@ export function InterviewWizard() {
             ) : (
               <div className="space-y-4">
                 {/* Large clickable Yes/No cards */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <button
                     onClick={() => handleAnswer(false)}
-                    className="group relative rounded-xl border-2 border-foreground/10 bg-background/40 hover:bg-background/60 hover:border-foreground/20 p-5 transition-all duration-200 text-left active:scale-[0.98]"
+                    className="group relative rounded-xl border-2 border-foreground/10 bg-background/40 hover:bg-background/60 hover:border-foreground/20 p-4 sm:p-5 transition-all duration-200 text-left active:scale-[0.98]"
                   >
                     <div className="text-center space-y-2">
                       <div className="flex justify-center">
@@ -431,7 +431,7 @@ export function InterviewWizard() {
                   </button>
                   <button
                     onClick={() => handleAnswer(true)}
-                    className="group relative rounded-xl border-2 border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 p-5 transition-all duration-200 text-left active:scale-[0.98]"
+                    className="group relative rounded-xl border-2 border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 p-4 sm:p-5 transition-all duration-200 text-left active:scale-[0.98]"
                   >
                     <div className="text-center space-y-2">
                       <div className="flex justify-center">

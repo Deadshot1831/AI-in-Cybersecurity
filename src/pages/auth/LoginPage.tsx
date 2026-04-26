@@ -87,8 +87,8 @@ export function LoginPage() {
       </div>
 
       {/* Auth panel */}
-      <div className="flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md space-y-6">
+      <div className="flex items-center justify-center p-4 sm:p-8 lg:p-12">
+        <div className="w-full max-w-md space-y-5 sm:space-y-6">
           <div className="space-y-2 text-center lg:hidden">
             <div className="inline-flex items-center gap-2 text-lg font-semibold">
               <Shield className="h-6 w-6 text-primary" />

@@ -67,7 +67,7 @@ export function HomePage() {
       ]
 
   return (
-    <div className="relative flex flex-col gap-24 py-16">
+    <div className="relative flex flex-col gap-16 sm:gap-20 lg:gap-24 py-8 sm:py-12 lg:py-16">
       {/* ────────── HERO ────────── */}
       <section className="relative">
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
@@ -87,7 +87,7 @@ export function HomePage() {
 
             {/* Glitched headline */}
             <h1
-              className="font-[family-name:var(--font-display)] font-black uppercase leading-[0.9] tracking-[0.02em] text-5xl sm:text-6xl lg:text-7xl mb-6 animate-fade-up"
+              className="font-[family-name:var(--font-display)] font-black uppercase leading-[0.9] tracking-[0.02em] text-4xl sm:text-6xl lg:text-7xl mb-6 animate-fade-up"
               style={{ animationDelay: "120ms" }}
             >
               <span
@@ -107,7 +107,7 @@ export function HomePage() {
 
             {/* Terminal description */}
             <div
-              className="cyber-chamfer border border-border bg-card/60 backdrop-blur-sm p-5 mb-8 font-[family-name:var(--font-mono)] text-sm leading-relaxed text-muted-foreground animate-fade-up"
+              className="cyber-chamfer border border-border bg-card/60 backdrop-blur-sm p-4 sm:p-5 mb-8 font-[family-name:var(--font-mono)] text-xs sm:text-sm leading-relaxed text-muted-foreground animate-fade-up"
               style={{ animationDelay: "200ms" }}
             >
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-accent mb-3">
@@ -131,14 +131,14 @@ export function HomePage() {
               className="flex flex-wrap items-center gap-3 animate-fade-up"
               style={{ animationDelay: "300ms" }}
             >
-              <Link to="/input">
-                <Button variant="glitch" size="lg" className="shimmer-host magnetic-glow">
+              <Link to="/input" className="w-full sm:w-auto">
+                <Button variant="glitch" size="lg" className="shimmer-host magnetic-glow w-full sm:w-auto">
                   {plainEnglish ? "Check My AI System" : "Initiate Scan"}{" "}
                   <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
                 </Button>
               </Link>
-              <Link to="/analysis">
-                <Button variant="outline" size="lg">
+              <Link to="/analysis" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto">
                   <Terminal className="h-4 w-4" strokeWidth={1.5} /> View Console
                 </Button>
               </Link>
