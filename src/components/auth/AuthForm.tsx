@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuthStore } from "@/stores/useAuthStore"
+import { toast } from "sonner"
 
 type Mode = "signin" | "signup"
 
 interface AuthFormProps {
   mode: Mode
   onForgotPassword?: () => void
+  onSignedUp?: () => void
 }
 
 interface FieldErrors {
@@ -37,7 +39,7 @@ function validate(mode: Mode, email: string, password: string, fullName: string)
   return errors
 }
 
-export function AuthForm({ mode, onForgotPassword }: AuthFormProps) {
+export function AuthForm({ mode, onForgotPassword, onSignedUp }: AuthFormProps) {
   const signInWithEmail = useAuthStore((s) => s.signInWithEmail)
   const signUpWithEmail = useAuthStore((s) => s.signUpWithEmail)
   const isLoading = useAuthStore((s) => s.isLoading)
@@ -60,6 +62,11 @@ export function AuthForm({ mode, onForgotPassword }: AuthFormProps) {
       await signInWithEmail(email, password)
     } else {
       await signUpWithEmail(email, password, fullName)
+      if (useAuthStore.getState().error) return
+      toast.success("Account created", {
+        description: "Check your inbox and click the confirmation link, then sign in.",
+      })
+      onSignedUp?.()
     }
   }
 

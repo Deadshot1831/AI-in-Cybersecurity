@@ -125,7 +125,7 @@ export function LoginPage() {
                 </TabsContent>
 
                 <TabsContent value="signup" className="mt-6">
-                  <AuthForm mode="signup" />
+                  <AuthForm mode="signup" onSignedUp={() => setTab("signin")} />
                 </TabsContent>
               </Tabs>
 
