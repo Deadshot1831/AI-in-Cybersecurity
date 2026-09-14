@@ -80,12 +80,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
     set({ isLoading: true, error: null })
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { full_name: fullName } },
       })
       if (error) throw error
+      // With email confirmation on, Supabase returns a fake user with no
+      // identities for an already-registered email instead of an error.
+      if (data.user && data.user.identities?.length === 0) {
+        throw new Error('An account with this email already exists. Sign in instead.')
+      }
       set({ isLoading: false })
     } catch (err) {
       const authErr = err as AuthError
