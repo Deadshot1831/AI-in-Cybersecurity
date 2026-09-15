@@ -31,6 +31,11 @@ export function LoginPage() {
     clearError()
   }, [tab, view, clearError])
 
+  const callbackError = (location.state as { error?: string } | null)?.error
+  useEffect(() => {
+    if (callbackError) toast.error("Sign-in failed", { description: callbackError })
+  }, [callbackError])
+
   if (user) {
     const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? "/"
     return <Navigate to={from} replace />
