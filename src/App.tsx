@@ -12,6 +12,7 @@ import { InputPage } from "@/pages/InputPage"
 import { AnalysisPage } from "@/pages/AnalysisPage"
 import { LoginPage } from "@/pages/auth/LoginPage"
 import { AuthCallbackPage } from "@/pages/auth/AuthCallbackPage"
+import { ResetPasswordPage } from "@/pages/auth/ResetPasswordPage"
 import { useAuthStore } from "@/stores/useAuthStore"
 
 const ExportPage = lazy(() =>
@@ -49,6 +50,7 @@ function AppRoutes() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
+          <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
         </Routes>
       </Suspense>
     )

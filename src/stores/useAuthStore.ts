@@ -17,6 +17,7 @@ interface AuthState {
   signInWithMagicLink: (email: string) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
+  updatePassword: (password: string) => Promise<void>
   clearError: () => void
 }
 
@@ -162,8 +163,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true, error: null })
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/reset-password`,
       })
+      if (error) throw error
+      set({ isLoading: false })
+    } catch (err) {
+      const authErr = err as AuthError
+      set({ error: authErr.message, isLoading: false })
+    }
+  },
+
+  updatePassword: async (password) => {
+    set({ isLoading: true, error: null })
+    try {
+      const { error } = await supabase.auth.updateUser({ password })
       if (error) throw error
       set({ isLoading: false })
     } catch (err) {
