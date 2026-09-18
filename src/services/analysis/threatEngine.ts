@@ -3,6 +3,7 @@ import type { ThreatAnalysisResult, AnalysisStatus, Threat, FrameworkType, Sever
 import { useAnalysisStore } from "@/stores/useAnalysisStore"
 import { useSettingsStore } from "@/stores/useSettingsStore"
 import { useSystemStore } from "@/stores/useSystemStore"
+import { useHistoryStore } from "@/stores/useHistoryStore"
 import { simulateDelay } from "@/services/mock/delay"
 import { createClient } from "@/services/claude/client"
 import { buildOwaspPrompt, buildStridePrompt, buildAtlasPrompt, buildCorrelationPrompt } from "@/services/claude/prompts"
@@ -789,6 +790,10 @@ export async function runThreatAnalysis(): Promise<void> {
     store.setResult(result)
     store.setStatus("complete")
     store.setProgress(100)
+    // Fire-and-forget: a failed history save must never fail the analysis.
+    useHistoryStore.getState().save(system, result).catch((err: Error) => {
+      console.warn("[History] save failed:", err.message)
+    })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Analysis failed"
     store.setError(message)

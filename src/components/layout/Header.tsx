@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { path: "/input", label: "Input", plainLabel: "Describe" },
   { path: "/analysis", label: "Analysis", plainLabel: "Report" },
   { path: "/export", label: "Export", plainLabel: "Download" },
+  { path: "/history", label: "History", plainLabel: "Past reports" },
 ]
 
 export function Header() {

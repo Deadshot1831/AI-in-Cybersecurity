@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
 import { HomePage } from "@/pages/HomePage"
 import { InputPage } from "@/pages/InputPage"
 import { AnalysisPage } from "@/pages/AnalysisPage"
+import { HistoryPage } from "@/pages/HistoryPage"
 import { LoginPage } from "@/pages/auth/LoginPage"
 import { AuthCallbackPage } from "@/pages/auth/AuthCallbackPage"
 import { ResetPasswordPage } from "@/pages/auth/ResetPasswordPage"
@@ -82,6 +83,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute>
                 <ExportPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <PageContainer><HistoryPage /></PageContainer>
               </ProtectedRoute>
             }
           />
